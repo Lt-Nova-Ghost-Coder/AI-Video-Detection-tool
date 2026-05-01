@@ -1,266 +1,22 @@
-# VERITAS — Deepfake Video Detection System
+# AI Video Detection (VERITAS)
 
-A full-stack AI-powered system for detecting deepfake videos using frame-level forensic analysis.
+Web app for deepfake video screening using a React + Vite frontend and a FastAPI backend.
+
+Users can upload an MP4, extract representative frames, run analysis on the backend model, and export a forensic PDF report.
 
 ---
 
 ## 🚀 Overview
 
-VERITAS is a modern deepfake detection pipeline that:
+VERITAS is a full-stack AI system that:
 
-* Accepts video input from users
-* Extracts frames directly in the browser (no full upload)
-* Sends frames to a Python backend
-* Runs AI-based detection
-* Returns a structured forensic report
-* Visualizes results with an interactive dashboard
+* Accepts video uploads
+* Extracts frames directly in the browser (no full video upload)
+* Sends frames to a FastAPI backend
+* Runs deepfake detection
+* Returns structured forensic analysis
+* Displays results in a visual dashboard
 * Generates a downloadable PDF report
-
-The system is designed to be fast, privacy-friendly, and extensible.
-
----
-
-## 🧠 How It Works
-
-### End-to-End Flow
-
-```text
-User uploads video
-↓
-Frames extracted in browser
-↓
-Frames sent to backend API
-↓
-AI model analyzes frames
-↓
-Scores + artifacts generated
-↓
-Frontend dashboard renders results
-↓
-User downloads forensic PDF report
-```
-
----
-
-## 🖥️ Frontend Architecture
-
-Built with **React + Vite**.
-
-### Responsibilities
-
-* Video upload UI
-* Frame extraction in browser
-* Sending data to backend
-* Rendering forensic results
-* Generating PDF reports
-
-### Key Files
-
-```text
-src/pages/Index.tsx
-src/components/VideoDropzone.tsx
-src/lib/videoFrames.ts
-src/components/ScoreGauge.tsx
-src/components/FrameTimeline.tsx
-src/lib/pdfReport.ts
-src/lib/analysis.ts
-```
-
-### Key Feature
-
-✔ Only frames are sent — not the full video
-→ Faster + more private
-
----
-
-## ⚙️ Backend Architecture
-
-Built with **FastAPI**.
-
-### Responsibilities
-
-* Receive frames + metadata
-* Decode and preprocess images
-* Run deepfake detection model
-* Aggregate results
-* Return structured JSON
-
-### Structure
-
-```text
-backend/
-├── app.py
-├── detector.py
-├── schemas.py
-├── config.py
-├── utils/
-│   ├── preprocessing.py
-│   └── inference.py
-├── models/
-│   └── weights/
-```
-
----
-
-## 🔍 Detection Pipeline
-
-```text
-Base64 frames
-→ Decode images
-→ Face extraction
-→ CNN model inference
-→ Frame scores
-→ Aggregate result
-→ Generate verdict
-```
-
-### Example Output
-
-```json
-{
-  "overall_score": 76.5,
-  "verdict": "Likely Deepfake",
-  "summary": "Synthetic artifacts detected",
-  "frames": [
-    { "score": 72, "notes": "Facial inconsistency" }
-  ],
-  "artifacts": [
-    { "name": "Lighting mismatch", "severity": "medium" }
-  ]
-}
-```
-
----
-
-## 🧪 Running the Project
-
-### 1. Clone Repository
-
-```bash
-git clone <your-repo-url>
-cd project
-```
-
----
-
-### 2. Setup Backend
-
-```bash
-cd backend
-python -m venv venv
-venv\Scripts\activate    # Windows
-# or
-source venv/bin/activate  # Mac/Linux
-
-pip install -r requirements.txt
-```
-
-Run server:
-
-```bash
-uvicorn app:app --reload --port 8001
-```
-
-Open:
-
-```text
-http://127.0.0.1:8001/docs
-```
-
----
-
-### 3. Setup Frontend
-
-```bash
-npm install
-npm run dev
-```
-
-Open:
-
-```text
-http://localhost:5173
-```
-
----
-
-## 🔌 API Endpoint
-
-### POST `/analyze`
-
-#### Request
-
-```json
-{
-  "frames": ["base64_image"],
-  "metadata": {}
-}
-```
-
-#### Response
-
-* `overall_score`
-* `verdict`
-* `summary`
-* `frames`
-* `artifacts`
-
----
-
-## 🧠 Model Details
-
-Current version uses:
-
-* Frame-level CNN (EfficientNet-based)
-* Face extraction preprocessing
-* Score aggregation across frames
-
-### Future Improvements
-
-* Temporal modeling (LSTM / Transformer)
-* Blink detection
-* Lip-sync consistency checks
-* GAN artifact detection
-
----
-
-## 📄 PDF Report
-
-Generates a forensic report including:
-
-* Video metadata
-* Overall score
-* Verdict
-* Frame analysis
-* Artifact findings
-
----
-
-## 📈 Future Improvements
-
-* Improve model accuracy
-* Add temporal detection
-* Deploy backend
-* Add authentication
-* Provide API access
-
----
-
-## ⚠️ Limitations
-
-* Depends on model quality
-* Limited temporal understanding
-* Face detection may fail in edge cases
-
----
-
-## 🎯 Use Cases
-
-* Media verification
-* Fake content detection
-* Recruitment fraud detection
-* Content moderation
-* Digital forensics
 
 ---
 
@@ -272,13 +28,241 @@ Generates a forensic report including:
 * TypeScript
 * Vite
 * Tailwind CSS
+* shadcn/ui
 
 ### Backend
 
 * FastAPI
-* Python
+* Pydantic
+* Uvicorn
+
+### ML / Runtime
+
 * OpenCV
+* NumPy
 * PyTorch
+* Torchvision
+
+---
+
+## 📁 Project Structure
+
+```text
+main/
+  src/                # Frontend app (UI, frame extraction, API client, PDF report)
+  backend/            # FastAPI app, schema models, detector pipeline
+  scripts/dev.mjs     # Dynamic dev launcher (auto-picks free ports)
+```
+
+---
+
+## ⚙️ Prerequisites
+
+* Node.js 18+ and npm
+* Python 3.10+ (tested with Python 3.14)
+
+---
+
+## 📦 Installation
+
+From the project root (`main/`):
+
+```bash
+npm install
+python -m pip install -r backend/requirements.txt
+```
+
+---
+
+## 🧪 Run in Development
+
+Start frontend and backend together:
+
+```bash
+npm run dev
+```
+
+### What this does
+
+The dev launcher automatically:
+
+* picks a free frontend port from: `8080, 5173, 3000, 4173`
+* picks a free backend port from: `8000, 8001, 8010, 9000, 9100`
+* sets `VITE_API_BASE_URL`
+* ensures frontend connects to backend correctly
+* shuts down both services cleanly on exit
+
+---
+
+### Run Individually (Optional)
+
+```bash
+npm run dev:frontend
+npm run dev:backend
+```
+
+If running manually, set:
+
+```env
+VITE_API_BASE_URL=http://localhost:8000
+```
+
+(or whichever port backend is running on)
+
+---
+
+## 📜 Available Scripts
+
+* `npm run dev` → full-stack development
+* `npm run dev:frontend` → frontend only
+* `npm run dev:backend` → backend only
+* `npm run build` → production build
+* `npm run build:dev` → dev-mode build
+* `npm run lint` → linting
+* `npm run test` → run tests once
+* `npm run test:watch` → watch mode tests
+
+---
+
+## 🔌 API Overview
+
+Base URL is dynamically assigned during development.
+
+### Endpoints
+
+#### `GET /`
+
+Returns service status.
+
+#### `GET /health`
+
+```json
+{ "ok": true }
+```
+
+#### `POST /analyze`
+
+Analyzes extracted frames and video metadata.
+
+---
+
+### Request Format
+
+```json
+{
+  "frames": [
+    {
+      "index": 0,
+      "time": 1.2,
+      "dataUrl": "base64_image"
+    }
+  ],
+  "metadata": {
+    "duration": 10,
+    "width": 1280,
+    "height": 720,
+    "sizeBytes": 123456,
+    "type": "video/mp4",
+    "name": "sample.mp4"
+  }
+}
+```
+
+---
+
+### Response Format
+
+```json
+{
+  "overall_score": 76.5,
+  "verdict": "likely_manipulated",
+  "summary": "Synthetic artifacts detected",
+  "frames": [...],
+  "artifacts": [...]
+}
+```
+
+#### Verdict Values
+
+* `likely_authentic`
+* `inconclusive`
+* `likely_manipulated`
+* `highly_likely_manipulated`
+
+---
+
+## 🔍 Detection Pipeline
+
+```text
+Video Upload
+→ Frame Extraction (browser)
+→ Frame Transfer (API)
+→ Preprocessing (OpenCV)
+→ Model Inference (PyTorch)
+→ Score Aggregation
+→ Verdict + Artifacts
+→ Dashboard Rendering
+→ PDF Report
+```
+
+---
+
+## 📄 PDF Report
+
+Includes:
+
+* Video metadata
+* Overall score
+* Verdict
+* Frame-level analysis
+* Detected artifacts
+
+---
+
+## ⚠️ Troubleshooting
+
+### Backend Connection Errors
+
+Use:
+
+```bash
+npm run dev
+```
+
+It auto-configures ports and connections.
+
+---
+
+### Port Issues (Windows / WinError 10013)
+
+The dev launcher automatically switches ports if blocked.
+
+---
+
+### Python Dependency Issues
+
+```bash
+python -m pip install --upgrade pip
+python -m pip install -r backend/requirements.txt
+```
+
+---
+
+## ⚠️ Limitations
+
+* Accuracy depends on trained model quality
+* Limited temporal analysis (frame-based)
+* Face detection may fail in edge cases
+
+---
+
+## 🎯 Use Cases
+
+* Media verification
+* Deepfake detection
+* Recruitment fraud prevention
+* Content moderation
+* Digital forensics
 
 ---
 
@@ -290,10 +274,16 @@ AI + Full-stack project focused on deepfake detection and forensic analysis.
 
 ## ⭐ Final Note
 
-VERITAS is a strong foundation for:
+VERITAS is designed as a foundation for:
 
 * research projects
 * startup prototypes
 * AI security tools
 
-Extend it by improving model accuracy and real-world integrations.
+Use it as a base to build more advanced and production-ready deepfake detection systems.
+
+---
+
+## ⚖️ Disclaimer
+
+This tool provides automated screening signals and should be treated as assistive analysis, not definitive or legal proof.
