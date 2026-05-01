@@ -1,0 +1,161 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================
+   FORENSIC AI DETECTION — Cyber/Scanner Theme
+   All colors HSL. Tokens only — no ad-hoc colors.
+   ============================================ */
+
+@layer base {
+  :root {
+    /* Deep terminal background */
+    --background: 160 30% 4%;
+    --foreground: 150 25% 92%;
+
+    --card: 160 28% 6%;
+    --card-foreground: 150 25% 92%;
+
+    --popover: 160 30% 5%;
+    --popover-foreground: 150 25% 92%;
+
+    /* Neon scanner green */
+    --primary: 145 100% 55%;
+    --primary-foreground: 160 40% 4%;
+    --primary-glow: 145 100% 65%;
+
+    /* Cyan diagnostic */
+    --secondary: 180 90% 55%;
+    --secondary-foreground: 160 40% 4%;
+
+    --muted: 160 20% 10%;
+    --muted-foreground: 150 10% 60%;
+
+    --accent: 180 100% 50%;
+    --accent-foreground: 160 40% 4%;
+
+    /* Threat / alert */
+    --destructive: 0 95% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --warning: 35 100% 58%;
+    --warning-foreground: 0 0% 0%;
+    --safe: 145 80% 50%;
+
+    --border: 150 40% 15%;
+    --input: 160 25% 10%;
+    --ring: 145 100% 55%;
+
+    --radius: 0.25rem;
+
+    /* Gradients */
+    --gradient-scan: linear-gradient(180deg, hsl(145 100% 55% / 0) 0%, hsl(145 100% 55% / 0.4) 50%, hsl(145 100% 55% / 0) 100%);
+    --gradient-grid: linear-gradient(hsl(145 100% 55% / 0.06) 1px, transparent 1px),
+                     linear-gradient(90deg, hsl(145 100% 55% / 0.06) 1px, transparent 1px);
+    --gradient-radial: radial-gradient(ellipse at top, hsl(145 100% 55% / 0.15), transparent 60%);
+    --gradient-threat: linear-gradient(135deg, hsl(0 95% 60%), hsl(35 100% 58%));
+    --gradient-safe: linear-gradient(135deg, hsl(145 100% 55%), hsl(180 90% 55%));
+
+    /* Shadows / glows */
+    --glow-primary: 0 0 30px hsl(145 100% 55% / 0.5), 0 0 60px hsl(145 100% 55% / 0.2);
+    --glow-danger: 0 0 30px hsl(0 95% 60% / 0.5);
+    --shadow-panel: 0 0 0 1px hsl(150 40% 15%), 0 20px 50px -10px hsl(0 0% 0% / 0.6);
+
+    /* Motion */
+    --transition-smooth: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    background: hsl(var(--background));
+  }
+
+  body {
+    @apply bg-background text-foreground font-mono;
+    background-image: var(--gradient-radial), var(--gradient-grid);
+    background-size: 100% 100%, 40px 40px, 40px 40px;
+    background-attachment: fixed;
+    font-feature-settings: "ss01", "cv01";
+  }
+
+  ::selection {
+    background: hsl(var(--primary) / 0.3);
+    color: hsl(var(--primary-glow));
+  }
+}
+
+@layer components {
+  .panel {
+    @apply relative bg-card/60 backdrop-blur-sm border border-border;
+    box-shadow: var(--shadow-panel);
+  }
+
+  .panel-header {
+    @apply flex items-center justify-between px-4 py-2 border-b border-border bg-muted/40 text-xs uppercase tracking-[0.2em] text-muted-foreground;
+  }
+
+  .scanline {
+    position: relative;
+    overflow: hidden;
+  }
+  .scanline::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--gradient-scan);
+    background-size: 100% 200%;
+    animation: scan 3s linear infinite;
+    pointer-events: none;
+  }
+
+  .text-glow {
+    text-shadow: 0 0 12px hsl(var(--primary) / 0.7);
+  }
+
+  .corner-frame::before,
+  .corner-frame::after,
+  .corner-frame > .corner-tl,
+  .corner-frame > .corner-br {
+    content: "";
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border-color: hsl(var(--primary));
+    border-style: solid;
+  }
+  .corner-frame::before { top: -1px; left: -1px; border-width: 1px 0 0 1px; }
+  .corner-frame::after { top: -1px; right: -1px; border-width: 1px 1px 0 0; }
+  .corner-frame > .corner-tl { bottom: -1px; left: -1px; border-width: 0 0 1px 1px; }
+  .corner-frame > .corner-br { bottom: -1px; right: -1px; border-width: 0 1px 1px 0; }
+}
+
+@layer utilities {
+  .font-display {
+    font-family: "JetBrains Mono", "Fira Code", ui-monospace, monospace;
+    letter-spacing: -0.02em;
+  }
+}
+
+@keyframes scan {
+  0% { background-position: 0 -100%; }
+  100% { background-position: 0 100%; }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px hsl(var(--primary) / 0.4); }
+  50% { box-shadow: 0 0 40px hsl(var(--primary) / 0.8); }
+}
+
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.85; }
+}
+
+@keyframes blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}

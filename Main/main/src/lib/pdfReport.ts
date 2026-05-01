@@ -1,0 +1,180 @@
+import jsPDF from "jspdf";
+import type { AnalysisResult } from "./analysis";
+import type { VideoMetadata } from "./videoFrames";
+
+export function generateForensicPDF(result: AnalysisResult, metadata: VideoMetadata) {
+  const doc = new jsPDF({ unit: "pt", format: "a4" });
+  const W = doc.internal.pageSize.getWidth();
+  let y = 50;
+
+  doc.setFillColor(10, 18, 14);
+  doc.rect(0, 0, W, 80, "F");
+  doc.setTextColor(80, 255, 160);
+  doc.setFont("courier", "bold");
+  doc.setFontSize(20);
+  doc.text("VERITAS // FORENSIC REPORT", 40, 45);
+  doc.setFontSize(9);
+  doc.setTextColor(150, 200, 170);
+  doc.text(`Generated ${new Date().toISOString()}`, 40, 62);
+
+  y = 110;
+  doc.setTextColor(20, 20, 20);
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(12);
+  doc.text("VERDICT", 40, y);
+  y += 6;
+  doc.setDrawColor(180);
+  doc.line(40, y, W - 40, y);
+  y += 20;
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(28);
+  const verdictColor: [number, number, number] =
+    result.overall_score < 30 ? [30, 160, 80] : result.overall_score < 65 ? [220, 140, 0] : [200, 30, 30];
+  doc.setTextColor(...verdictColor);
+  doc.text(`${Math.round(result.overall_score)}% AI`, 40, y);
+  doc.setFontSize(12);
+  doc.setTextColor(60, 60, 60);
+  doc.text(prettyVerdict(result.verdict), 160, y);
+
+  y += 30;
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(10);
+  doc.setTextColor(40, 40, 40);
+  const summaryLines = doc.splitTextToSize(result.summary, W - 80);
+  doc.text(summaryLines, 40, y);
+  y += summaryLines.length * 14 + 16;
+
+  // Metadata
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(12);
+  doc.text("FILE METADATA", 40, y);
+  y += 6;
+  doc.line(40, y, W - 40, y);
+  y += 16;
+  doc.setFont("courier", "normal");
+  doc.setFontSize(10);
+  const meta = [
+    ["filename", metadata.name],
+    ["duration", `${metadata.duration.toFixed(2)} s`],
+    ["resolution", `${metadata.width} × ${metadata.height}`],
+    ["size", `${(metadata.sizeBytes / 1024 / 1024).toFixed(2)} MB`],
+    ["mime", metadata.type],
+  ];
+  meta.forEach(([k, v]) => {
+    doc.setTextColor(120);
+    doc.text(k.padEnd(12), 40, y);
+    doc.setTextColor(20);
+    doc.text(String(v), 140, y);
+    y += 14;
+  });
+
+  y += 12;
+
+  // Artifacts
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(12);
+  doc.setTextColor(20);
+  doc.text("DETECTED ARTIFACTS", 40, y);
+  y += 6;
+  doc.line(40, y, W - 40, y);
+  y += 16;
+
+  if (result.artifacts.length === 0) {
+    doc.setFont("helvetica", "italic");
+    doc.setFontSize(10);
+    doc.setTextColor(120);
+    doc.text("No significant manipulation artifacts detected.", 40, y);
+    y += 18;
+  } else {
+    result.artifacts.forEach((a) => {
+      if (y > 760) {
+        doc.addPage();
+        y = 50;
+      }
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(10);
+      const sevColor: [number, number, number] =
+        a.severity === "low" ? [80, 140, 80] : a.severity === "medium" ? [200, 140, 0] : [200, 30, 30];
+      doc.setTextColor(...sevColor);
+      doc.text(`[${a.severity.toUpperCase()}]`, 40, y);
+      doc.setTextColor(20);
+      doc.text(a.name, 100, y);
+      y += 14;
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(60);
+      const lines = doc.splitTextToSize(a.description, W - 100);
+      doc.text(lines, 60, y);
+      y += lines.length * 12 + 10;
+    });
+  }
+
+  // Frame analysis
+  if (y > 650) {
+    doc.addPage();
+    y = 50;
+  }
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(12);
+  doc.setTextColor(20);
+  doc.text("FRAME-BY-FRAME ANALYSIS", 40, y);
+  y += 6;
+  doc.line(40, y, W - 40, y);
+  y += 16;
+
+  doc.setFont("courier", "bold");
+  doc.setFontSize(9);
+  doc.setTextColor(120);
+  doc.text("#", 40, y);
+  doc.text("TIME", 70, y);
+  doc.text("SCORE", 130, y);
+  doc.text("FACE", 190, y);
+  doc.text("NOTES", 240, y);
+  y += 12;
+
+  doc.setFont("courier", "normal");
+  result.frames
+    .sort((a, b) => a.index - b.index)
+    .forEach((f) => {
+      if (y > 780) {
+        doc.addPage();
+        y = 50;
+      }
+      const sevColor: [number, number, number] =
+        f.score < 30 ? [30, 160, 80] : f.score < 65 ? [200, 140, 0] : [200, 30, 30];
+      doc.setTextColor(60);
+      doc.text(String(f.index + 1), 40, y);
+      doc.text(`${f.time.toFixed(2)}s`, 70, y);
+      doc.setTextColor(...sevColor);
+      doc.text(`${Math.round(f.score)}%`, 130, y);
+      doc.setTextColor(60);
+      doc.text(f.face_detected ? "yes" : "no", 190, y);
+      const notes = doc.splitTextToSize(f.notes, W - 280);
+      doc.text(notes, 240, y);
+      y += Math.max(14, notes.length * 11);
+    });
+
+  // Footer disclaimer
+  doc.addPage();
+  y = 50;
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(11);
+  doc.setTextColor(20);
+  doc.text("DISCLAIMER", 40, y);
+  y += 18;
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(9);
+  doc.setTextColor(80);
+  const disc = doc.splitTextToSize(
+    "This report is generated by an automated AI vision model and is provided for informational purposes only. It does not constitute legal evidence. Detection accuracy depends on video quality, length, codec, and the sophistication of the manipulation. Always corroborate findings with independent forensic analysis before drawing conclusions.",
+    W - 80
+  );
+  doc.text(disc, 40, y);
+
+  const safeName = metadata.name.replace(/[^a-z0-9]/gi, "_").slice(0, 40);
+  doc.save(`veritas_report_${safeName}.pdf`);
+}
+
+function prettyVerdict(v: string) {
+  return v.replace(/_/g, " ").toUpperCase();
+}
