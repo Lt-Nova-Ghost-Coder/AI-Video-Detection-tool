@@ -266,6 +266,56 @@ python -m pip install -r backend/requirements.txt
 
 ---
 
+## 🎥 Demo Videos
+
+Sample videos for testing are included inside:
+
+main/test_videos/
+
+These videos can be used to test the detection pipeline and observe how VERITAS analyzes manipulated and authentic-looking content.
+
+---
+
+## 📊 Accuracy & Margin of Error
+
+VERITAS is an experimental AI-powered deepfake screening system developed as a prototype.
+
+Detection scores, verdicts, and forensic indicators may vary depending on:
+- video quality,
+- compression,
+- lighting conditions,
+- face visibility,
+- frame selection,
+- and model limitations.
+
+As with most AI systems, there is a margin of error and results should not be treated as definitive proof.
+
+The current implementation is intended to demonstrate the concept and workflow of explainable deepfake detection rather than provide production-grade accuracy.
+
+Building highly reliable deepfake detection systems requires:
+- massive and continuously updated datasets,
+- advanced temporal analysis algorithms,
+- high-performance infrastructure,
+- extensive training and evaluation,
+- and significant computational resources and funding.
+
+---
+
+## 🚧 Hackathon Prototype Note
+
+VERITAS was built as a hackathon project to demonstrate how AI can be used to help detect and analyze manipulated videos through an accessible full-stack application.
+
+The project serves as a foundation for future improvements in:
+- detection accuracy,
+- explainable AI analysis,
+- scalability,
+- and real-world deployment.
+
+This prototype demonstrates that practical AI verification tools can be rapidly created and iteratively improved using modern AI-assisted development workflows.
+
+
+---
+
 ## 👨‍💻 Author
 
 AI + Full-stack project focused on deepfake detection and forensic analysis.
