@@ -3,6 +3,7 @@ import type { ExtractedFrame, VideoMetadata } from "@/lib/videoFrames";
 
 const CONFIGURED_API_BASE_URL = import.meta.env.VITE_API_BASE_URL?.trim();
 
+
 type AnalyzePayload = {
   frames: ExtractedFrame[];
   metadata: VideoMetadata;
