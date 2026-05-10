@@ -93,7 +93,7 @@ const Index = () => {
                 VERITAS
               </h1>
               <p className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground -mt-0.5">
-                Deepfake Forensic Scanner v1.0
+                Deepfake Forensic Scanner v1.0 (Prototype)
               </p>
             </div>
           </div>
@@ -117,7 +117,7 @@ const Index = () => {
         >
           <div className="inline-flex items-center gap-2 px-3 py-1 mb-4 border border-primary/40 bg-primary/5 text-[10px] uppercase tracking-[0.3em] text-primary">
             <span className="h-1.5 w-1.5 bg-primary animate-blink" />
-            classified // forensic-grade
+            RESEARCH PROTOTYPE // DEEPFAKE ANALYSIS
           </div>
           <h2 className="text-4xl md:text-6xl font-bold font-display tracking-tight">
             Detect <span className="text-primary text-glow">deepfakes</span>
@@ -126,7 +126,8 @@ const Index = () => {
           </h2>
           <p className="mt-5 text-sm md:text-base text-muted-foreground max-w-xl mx-auto">
             Upload an MP4. We sample frames from the video stream and run them through a forensic vision
-            model to score the probability of face manipulation, generate a full report, and export PDF.
+            model to score the probability of face manipulation, generate a full report, and export PDF. <br />
+            This is just a prototype for research purposes — do not use for real-world forensic investigations or legal evidence.
           </p>
         </motion.section>
 
@@ -364,7 +365,7 @@ const Index = () => {
       </div>
 
       <footer className="border-t border-border mt-16 py-6 text-center text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
-        VERITAS · Forensic AI · Local Analysis Mode
+        VERITAS · Forensic AI · Local Analysis Mode · Prototype v1.0
       </footer>
     </main>
   );
