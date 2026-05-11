@@ -27,11 +27,15 @@ def home():
     }
 
 
-@app.get("/health")
+#@app.get("/health")
+#def health():
+#    return {
+#      "ok":True
+#    }
+
+@app.api_route("/health", methods=["GET", "HEAD"])
 def health():
-    return {
-      "ok":True
-    }
+    return {"ok": True}
 
 
 @app.post("/analyze", response_model=AnalysisResponse)
